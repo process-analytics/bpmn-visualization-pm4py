@@ -76,8 +76,20 @@ It is assumed that the following is installed on your system:
 1. Clone the project template in your preferred IDE (e.g. VScode)
 2. Prepare the backend environment:
     1. Navigate to the `backend` folder: `cd backend`
-    2. Create a virtual environment for dependencies called `venv` using the following command: `python -m venv venv`
-    2. Install the required libraries listed in `requirements.txt`by running:
+    2. Create a virtual environment for dependencies called `venv` using the following command: 
+    ```sh 
+    python -m venv venv
+    ```
+    3. Activate the created `venv`by running:
+      * **Windows**: 
+      ```sh 
+      venv\Scripts\activate.bat
+      ```
+      * **Unix/MacOS**:
+      ```sh
+      venv/bin/activate
+      ```
+    4. Install the required libraries listed in `requirements.txt` by running:
     ```sh
     pip install -r requirements.txt
     ```
