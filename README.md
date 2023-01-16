@@ -1,4 +1,5 @@
-# Setup
+# Integration between `bpmn-visualization` and `pm4py`
+This is a template bootstrap for the integration example between [bpmn-visualization](https://github.com/process-analytics/bpmn-visualization-js/) and [PM4PY](https://github.com/pm4py).
 
 ## Prerequisites
 
@@ -71,7 +72,7 @@ It is assumed that the following is installed on your system:
   npm --version
   ```
 
-## Clone the project template and install the libraries
+## Setup
 1. Clone the project template in your preferred IDE (e.g. VScode)
 2. Prepare the backend environment:
     1. Navigate to the `backend` folder: `cd backend`
