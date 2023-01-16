@@ -59,7 +59,7 @@ It is assumed that the following is installed on your system:
     command -v nvm
     ```
     4. If you run into problems, you can check the complete documentation available here: https://github.com/nvm-sh/nvm#installing-and-updating
-* Latest releases of `Node.js` and `npm`: Use `nvm` to install, and use, the current latest stable version of `Node.js` and `npm` by running: 
+* `Node.js` and `npm`: Use `nvm` to install, and use, the current latest stable version of `Node.js` and `npm` by running: 
   ```sh
   nvm install --lts
   ```
