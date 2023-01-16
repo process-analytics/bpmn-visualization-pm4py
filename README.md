@@ -34,7 +34,7 @@ It is assumed that the following is installed on your system:
 ### Frontend part:
 * `nvm`: Node version manager to install `Node.js` and `npm`:
   * **Windows**:
-    1. Donwload the latest release of `nvm-windows` from https://github.com/coreybutler/nvm-windows#readme. 
+    1. Donwload the latest release of [`nvm-windows`](https://github.com/coreybutler/nvm-windows#readme). 
     2. Click on `.exe` file to install the latest release.
     3. Complete the installation wizard
     4. When done, you can confirm that nvm has been installed by running:
@@ -42,7 +42,7 @@ It is assumed that the following is installed on your system:
     nvm -m
     ```
   * **Unix/MacOS**: 
-    1. In your terminal, run the nvm installer by using `cURL` or `Wget` commands depending on the command available on your device. These commands will clone the nvm repository to a ~/.nvm directory on your device:
+    1. In your terminal, run the nvm installer by using `cURL` or `Wget` commands depending on the command available on your device. These commands will clone the nvm repository to a `~/.nvm` directory on your device:
     ```sh
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 
@@ -59,7 +59,7 @@ It is assumed that the following is installed on your system:
     ```sh
     command -v nvm
     ```
-    4. If you run into problems, you can check the complete documentation available here: https://github.com/nvm-sh/nvm#installing-and-updating
+    4. If you run into problems, you can check the [complete documentation](https://github.com/nvm-sh/nvm#installing-and-updating).
 * `Node.js` and `npm`: Use `nvm` to install, and use, the current latest stable version of `Node.js` and `npm` by running: 
   ```sh
   nvm install --lts
