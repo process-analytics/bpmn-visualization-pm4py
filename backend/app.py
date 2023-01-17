@@ -50,11 +50,13 @@ def discover_inductive_miner():
     pm4py.write_bpmn(Parameters.BPMN_MODEL, 'result.bpmn')
 
     #generate layout
-    subprocess.call(['java', '-jar', 'bpmn-layout-generator-0.1.4-jar-with-dependencies.jar', '--output=./result.bpmn', 'result.bpmn'])
+    subprocess.call(['java', '-jar', 'bpmn-layout-generator-0.1.4-jar-with-dependencies.jar', '--output=./result-with-layout.bpmn', 'result.bpmn'])
     #get result and send it to frontend
-    bpmn_file_result = pm4py.read_bpmn('output.bpmn')
-
-    return flask.Response(response = bpmn_file_result, status=201, mimetype='text/xml')
+    file = open('result-with-layout.bpmn', 'r')
+    bpmn_xml_content = file.read()
+    print(bpmn_xml_content)
+    
+    return flask.Response(response = bpmn_xml_content, status=201, mimetype='text/xml')
 
 @app.route('/conformance/alignment', methods=["GET"])
 def compute_alignment():
