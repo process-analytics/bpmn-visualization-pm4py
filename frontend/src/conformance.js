@@ -1,7 +1,9 @@
 import globals from './globals.js';
+import { mxgraph } from './mxgraph-initializer';
 import { violationScale, colorLegend } from './colors.js'
 import { getDeviationOverlay, getSynchronousOverlay } from './overlays.js'
 import { getBpmnActivityElementbyName } from './utils.js';
+import { ShapeBpmnElementKind } from 'bpmn-visualization';
 
 export function getAlignment(formData) {
     console.log("Get alignments...");
@@ -20,20 +22,56 @@ export function getAlignment(formData) {
 function visualizeAlignment(alignedTraces){
     const myViolationScale = violationScale(0,100)
     console.log("alignments received!");
+
     //compute aggregated statistics of the received alignment
     const stats = getAlignmentDecorations(alignedTraces)
-    //generate colors for stats.normalizedStats
-    console.log(stats.normalizedStats)
-    for (const [activityName, violationValue] of Object.entries(stats.normalizedStats)) {
-        const activityElement = getBpmnActivityElementbyName(activityName)
-        //set the violation color
-        //firstChild is the svg rect element of the activity element
 
-        activityElement.htmlElement.firstChild.setAttribute("fill", myViolationScale(violationValue*100))
+    //set the violation color
+    /**
+    * A high level API will be provided: see https://github.com/process-analytics/bpmn-visualization-R/issues/13
+    */
+    let mxGraph = globals.bpmnVisualization.graph
+    let activityCurrentStyle = null
+    let activityCell = null
+
+    //first reset fill anf font color
+    let activities = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByKinds(ShapeBpmnElementKind.TASK)
+    let activityCells = activities.map(elt => mxGraph.getModel().getCell(elt.bpmnSemantic.id))
+    mxGraph.getModel().beginUpdate()
+    try {
+        mxgraph.mxUtils.setCellStyles(mxGraph.getModel(), activityCells, "fillColor", "none")
+        mxgraph.mxUtils.setCellStyles(mxGraph.getModel(), activityCells, "fontColor", "none")
+    } finally {
+        mxGraph.getModel().endUpdate();
+    }
+
+    //set violation color
+    for (const [activityName, violationValue] of Object.entries(stats.normalizedStats)) {
+        const activityElement = getBpmnActivityElementbyName(activityName) 
+        if(activityElement){
+            activityCell = mxGraph.getModel().getCell(activityElement.bpmnSemantic.id)
+            activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
+            mxGraph.getModel().beginUpdate()
+            try {
+                let style = mxgraph.mxUtils.setStyle(activityCurrentStyle, "fillColor", myViolationScale(violationValue*100))
+				mxGraph.getModel().setStyle(activityCell, style);
+                //different way of setting the style
+                //mxGraph.setCellStyles("fillColor", "red", [activityCell]); 
+
+                //set label to white when the activity fillColor is above the scale average
+                if(violationValue > 0.5){
+                    activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
+                    style = mxgraph.mxUtils.setStyle(activityCurrentStyle, 'fontColor', 'white')
+				    mxGraph.getModel().setStyle(activityCell, style);
+                }
+            } finally {
+                mxGraph.getModel().endUpdate();
+            }
+        }
         //add overlay
         globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
             activityElement.bpmnSemantic.id,
-            [getDeviationOverlay(stats.aggStats[activityName].modelMove, myViolationScale(violationValue*100)),
+            [getDeviationOverlay(stats.aggStats[activityName].modelMove, violationValue, myViolationScale(violationValue*100)),
                getSynchronousOverlay(stats.aggStats[activityName].syncMove)])
     }
     //add legend

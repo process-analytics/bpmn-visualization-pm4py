@@ -1,11 +1,18 @@
-export function getDeviationOverlay(label, color){
+export function getDeviationOverlay(label, violationValue, color){
+    let fontColor = "none"
+    if(violationValue > 0.5){
+        fontColor = "white"
+    }
+    else{
+        fontColor = "black"
+    }
     return {
         position: 'top-right',
         label: `${label}`,
         style: {
-          font: { color: 'black', size: 20 },
-          fill: { color: color, opacity: 50},
-          stroke: { color: 'transparent', width: 0}
+        font: { color: fontColor, size: 20 },
+        fill: { color: color, opacity: 50},
+        stroke: { color: 'transparent', width: 0}
         }
     }
 }
