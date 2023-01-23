@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Example of integration between bpmn-visualization and pm4py</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="node_modules/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="node_modules/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href= "node_modules/spectre.css/dist/spectre-icons.min.css">
+    <script type="module" src="src/index.js"></script>
+    
+  </head>
+  <body>
+      <section class="container col-12 flex-centered mt-2">
+          <section class="col-12 mt-2">
+              <div class="col-12 mt-2 mb-2">
+                  <h2>Example of integration between bpmn-visualization and pm4py</h2>
+                  <section class="container">
+                      <div class="columns col-oneline">
+                          <div class="menu column col-3 bg-gray">
+                              <div class="accordion mt-2">
+                                  <input type="checkbox" id="accordion-1" hidden>
+                                  <label class="accordion-header text-bold" for="accordion-1">
+                                      <i class="icon icon-arrow-right mr-1"></i>
+                                          Process Discovery
+                                  </label>
+                                  <div class="accordion-body text-small">
+                                      <div class="columns">
+                                          <div class="column col-2"></div>
+                                          <div class="column col-9">
+                                            <div class="form-group">
+                                              <div>
+                                                <label class="form-label float-left" for="xes-file-discovery">Event log</label>
+                                                <button class="btn d-invisible btn-action btn-sm s-circle ml-2" id="show-xes-log" href="#event-log-modal">ℹ️</button>
+                                              </div>
+                                              <input type="file" class="form-input input-sm mb-2" id="xes-file-discovery" accept=".xes"/>
+                                              <label class="form-label" for="noise-filter">Noise filter (%)</label>
+                                              <input type="range" class="slider tooltip mb-2" id="noise-threshold"  min="0" max="100" value="20" oninput="this.setAttribute('value', this.value);">
+                                              <center><button class="btn  btn-sm mt-2" id="discover-bpmn">Discover BPMN</button></center>
+                                            </div> 
+                                          </div>
+                                      </div>
+                                       
+                                  </div>
+                              </div>
+                              <div class="accordion">
+                                  <input type="checkbox" id="accordion-2" hidden>
+                                  <label class="accordion-header text-bold" for="accordion-2">
+                                    <i class="icon icon-arrow-right mr-1"></i>
+                                        Conformance Checking
+                                  </label>
+                                  <div class="accordion-body text-small">
+                                      <div class="columns">
+                                          <div class="column col-2"></div>
+                                          <div class="column col-9">
+                                              <div class="form-group">
+                                                  <label class="form-label" for="xes-file-conformance">Event log</label>
+                                                  <input type="file" class="form-input input-sm mb-2" id="xes-file-conformance" accept=".xes" required/>
+                                                  <center><button class="btn  btn-sm mt-2" id="compute-conformance">Compute conformance</button></center>
+                                              </div> 
+                                          </div>
+                                      </div> 
+                                  </div>
+                              </div>  
+                          </div>
+                          <div class="column col-9">
+                              <div id="bpmn-container"></div>
+                              <div id="legend"></div>
+                          </div>
+                      </div>
+                  </section>
+              </div>
+          </section>
+      </section>
+
+      <!-- The Modal -->
+      <div id="event-log-modal" class="modal">
+        <a class="modal-overlay" aria-label="Close"></a>
+        <div class="modal-container bg-dark" style="max-width: 1200px;max-height: 500px">
+            <div class="modal-header text-secondary">
+                <a id="close-modal" class="btn btn-clear float-right" aria-label="Close"></a>
+                <div class="modal-title h2">Event log</div>
+            </div>
+            <div class="modal-body">
+                <div class="content">
+                    <div id="xes-log-container" class="xes-container scrollable" style="background-color: white">
+                      <table class="table table-scroll text-dark" id="xes-log-table"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+      
+  </body>
+</html>
