@@ -47,34 +47,36 @@ function computeFrequency(){
 
 function visualizeFrequency(data) {
     console.log("Frequency stats received!")
+
+    //set the frequency color scale
     const values = Object.values(data);
     const max = Math.max(...values);
     const myFrequencyScale = frequencyScale(0, max)
+
+    //change activity style through mxGraph
+    /**
+     * A high level API will be provided: see https://github.com/process-analytics/bpmn-visualization-R/issues/13
+     */
     let mxGraph = globals.bpmnVisualization.graph
     let activityCurrentStyle = null
-    let activityNewColor = null
     let activityCell = null
+
+    //iterate over the activites and set their color by calling the frequency color scale function
     for (const [activityName, freqValue] of Object.entries(data)) {
         const activityElement = getBpmnActivityElementbyName(activityName)
-        //set the frequency color
-        //firstChild is the svg rect element of the activity element
         if(activityElement){
             activityCell = mxGraph.getModel().getCell(activityElement.bpmnSemantic.id)
             activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
-            activityNewColor = "fillColor="+myFrequencyScale(freqValue)+";"
             mxGraph.getModel().beginUpdate()
-            try {
-                
+            try {   
                let style = mxgraph.mxUtils.setStyle(activityCurrentStyle, "fillColor", myFrequencyScale(freqValue))
 				mxGraph.getModel().setStyle(activityCell, style);
             } finally {
                 mxGraph.getModel().endUpdate();
             }
-            //mxModel.setStyle(mxModel.getCell(activityElement.bpmnSemantic.id), "fill", myFrequencyScale(freqValue) )
-            //
-            //activityElement.htmlElement.firstChild.setAttribute("fill", myFrequencyScale(freqValue))
         }
     }
+    
     //add legend
     colorLegend({
         colorScale: myFrequencyScale,
