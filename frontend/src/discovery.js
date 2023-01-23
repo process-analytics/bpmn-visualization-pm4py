@@ -50,6 +50,7 @@ function visualizeFrequency(data) {
     //set the frequency color scale
     const values = Object.values(data);
     const max = Math.max(...values);
+    const avg = max/2;
     const myFrequencyScale = frequencyScale(0, max)
 
     //change activity style through mxGraph
@@ -67,9 +68,16 @@ function visualizeFrequency(data) {
             activityCell = mxGraph.getModel().getCell(activityElement.bpmnSemantic.id)
             activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
             mxGraph.getModel().beginUpdate()
-            try {   
-               let style = mxgraph.mxUtils.setStyle(activityCurrentStyle, "fillColor", myFrequencyScale(freqValue))
+            try { 
+                let style = mxgraph.mxUtils.setStyle(activityCurrentStyle, 'fillColor', myFrequencyScale(freqValue))
 				mxGraph.getModel().setStyle(activityCell, style);
+                activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
+                
+                //set label to white when the activity fillColor is above the scale average
+                if (freqValue > avg){
+                    style = mxgraph.mxUtils.setStyle(activityCurrentStyle, 'fontColor', 'white')
+				    mxGraph.getModel().setStyle(activityCell, style);
+                }
             } finally {
                 mxGraph.getModel().endUpdate();
             }
