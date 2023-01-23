@@ -71,12 +71,16 @@ function visualizeFrequency(data) {
             try { 
                 let style = mxgraph.mxUtils.setStyle(activityCurrentStyle, 'fillColor', myFrequencyScale(freqValue))
 				mxGraph.getModel().setStyle(activityCell, style);
-                activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
-                
+                //different way of setting the style
+                //mxGraph.setCellStyles("fillColor", myFrequencyScale(freqValue), [activityCell]); 
+
                 //set label to white when the activity fillColor is above the scale average
                 if (freqValue > avg){
+                    activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
                     style = mxgraph.mxUtils.setStyle(activityCurrentStyle, 'fontColor', 'white')
 				    mxGraph.getModel().setStyle(activityCell, style);
+                    //different way of setting the style
+                    //mxGraph.setCellStyles("fontColor", "white", [activityCell]); 
                 }
             } finally {
                 mxGraph.getModel().endUpdate();
