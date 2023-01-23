@@ -26,7 +26,6 @@ function visualizeBPMN(data) {
     globals.bpmnVisualization.load(data, {
         fit: { type: FitType.Center }
     });
-    globals.bpmnActivityElements = "Hello"
 
     //update the list of bpmn activities
     globals.bpmnActivityElements = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByKinds(ShapeBpmnElementKind.TASK)
@@ -76,7 +75,7 @@ function visualizeFrequency(data) {
             }
         }
     }
-    
+
     //add legend
     colorLegend({
         colorScale: myFrequencyScale,
