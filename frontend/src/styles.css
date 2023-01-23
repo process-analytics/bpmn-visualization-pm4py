@@ -1,0 +1,26 @@
+body {
+    font-family: sans-serif;
+  }
+
+.menu{
+  height: 75vh;
+}
+
+
+#bpmn-container {
+  /* This ensures that the parts of the diagram outside of the container are not displayed. */
+  overflow: hidden;
+  height: 75vh;
+  border: solid;
+  border-width: 1px;
+  border-color: rgb(132, 127, 127);
+
+}
+
+#legend {
+  height: 10vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
