@@ -8,11 +8,13 @@ from enum import Enum
 import subprocess #to execute the layout-generator jar file
 
 class Parameters:
-    EVENT_LOG = None
+    EVENT_LOG_DISCOVERY = None
+    EVENT_LOG_CONFORMANCE = None
     BPMN_MODEL = None
+    PROCESS_TREE = None
     PETRI_NET = None
-    IM = None #petri net initial marking
-    FM = None # Petri net final marking
+    IM = None
+    FM = None
 
 app = Flask(__name__)
 CORS(app)
@@ -24,17 +26,18 @@ def hello():
 @app.route('/discover/inductive-miner', methods=["POST"])
 def discover_inductive_miner():
     #read xes log
-    stream = request.files.getlist('file')[0].read()
+    log_stream = request.files.getlist('file')[0].read()
+    noise = request.form.get('noise')
 
     #serialize log, so that we can process it with pm4py
-    serialized_log = ('event_log', stream)
+    serialized_log = ('event_log', log_stream)
 
     #create pm4py event log object
-    Parameters.EVENT_LOG = pm4py.deserialize(serialized_log)
+    Parameters.EVENT_LOG_DISCOVERY = pm4py.deserialize(serialized_log)
 
     #discover petri net
-    Parameters.PETRI_NET, Parameters.IM, Parameters.FM = pm4py.discover_petri_net_inductive(Parameters.EVENT_LOG)
-    
+    Parameters.PETRI_NET, Parameters.IM, Parameters.FM = pm4py.discover_petri_net_inductive(Parameters.EVENT_LOG_DISCOVERY, noise_threshold=float(noise))
+
     #convert petri net to bpmn
     Parameters.BPMN_MODEL = pm4py.convert_to_bpmn(Parameters.PETRI_NET, Parameters.IM, Parameters.FM)
     
@@ -54,18 +57,48 @@ def discover_inductive_miner():
     #get result and send it to frontend
     file = open('result-with-layout.bpmn', 'r')
     bpmn_xml_content = file.read()
-    print(bpmn_xml_content)
     
     return flask.Response(response = bpmn_xml_content, status=201, mimetype='text/xml')
 
-@app.route('/conformance/alignment', methods=["GET"])
+
+@app.route('/conformance/alignment', methods=["POST"])
 def compute_alignment():
-    if Parameters.EVENT_LOG is not None and Parameters.PETRI_NET is not None:
-        aligned_traces = pm4py.conformance_diagnostics_alignments(Parameters.EVENT_LOG, Parameters.PETRI_NET, Parameters.IM, Parameters.FM)
+    #read xes log
+    log_stream = request.files.getlist('file')[0].read()
+
+    #serialize log, so that we can process it with pm4py
+    serialized_log = ('event_log', log_stream)
+
+    #create pm4py event log object
+    Parameters.EVENT_LOG_CONFORMANCE = pm4py.deserialize(serialized_log)
+    if Parameters.PETRI_NET is not None:
+        aligned_traces = pm4py.conformance_diagnostics_alignments(Parameters.EVENT_LOG_CONFORMANCE, Parameters.PETRI_NET, Parameters.IM, Parameters.FM)
+        #print(aligned_traces)
         return flask.jsonify(aligned_traces)
     else:
-        return flask.Response(response = "Event log and/or BPMN diagram are missing. \n Re-discover a model and then apply conformance checking", status=404, mimetype='text/xml')
-    
+        return flask.Response(response = "BPMN diagram is missing. \n Discover a model and then apply conformance checking", status=404, mimetype='text/xml')
+
+@app.route('/conversion/xes-to-csv', methods=["POST"])
+def xes_to_csv():
+    log_stream = request.files.getlist('file')[0].read()
+
+    #serialize log, so that we can process it with pm4py
+    serialized_log = ('event_log', log_stream)
+
+    #create pm4py event log object
+    Parameters.EVENT_LOG_DISCOVERY = pm4py.deserialize(serialized_log)
+    log_df = pm4py.convert_to_dataframe(Parameters.EVENT_LOG_DISCOVERY)
+    return flask.jsonify(log_df.to_html())
+
+
+
+@app.route('/stats/frequency', methods=["GET"])    
+def compute_activity_frequency():
+    log_df = pm4py.convert_to_dataframe(Parameters.EVENT_LOG_DISCOVERY)
+    activity_freq_df = log_df['concept:name'].value_counts()
+    return flask.jsonify(activity_freq_df.to_dict())
+
+
 
 if __name__ == "__main__":
     app.run("localhost", 6969)
