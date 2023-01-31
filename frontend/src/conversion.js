@@ -1,15 +1,10 @@
 export function convertToCSV(formData){
-    try{
-        fetch('http://localhost:6969/conversion/xes-to-csv', {
-            method: 'POST',
-            body: formData
-        }).then(response => response.json())
-          .then(data => visualizeCSV(data))
-          
-    }
-    catch(error){
-        console.log(error)
-    }
+    fetch('http://localhost:6969/conversion/xes-to-csv', {
+        method: 'POST',
+        body: formData
+    }).then(response => response.json())
+        .then(data => visualizeCSV(data))
+        .catch(error => console.log(error))
 }
 
 function visualizeCSV(data){

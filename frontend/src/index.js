@@ -3,8 +3,8 @@ import { getAlignment } from './conformance.js';
 import { convertToCSV } from './conversion.js';
 import './styles.css';
 
-const fileUpload = document.getElementById("xes-file-discovery")
-fileUpload.addEventListener("change", function(e){
+const fileUpload = document.getElementById('xes-file-discovery')
+fileUpload.addEventListener('change', function(e){
     document.getElementById('show-xes-log').classList.remove('d-invisible');
 })
 
@@ -17,30 +17,34 @@ document.getElementsByClassName('modal-overlay').item(0).onclick = () => {
     modalElt.classList.remove('active');
 };
 
-const showEventLogButton = document.getElementById("show-xes-log")
-showEventLogButton.addEventListener("click", function(e){
-    let file = fileUpload.files[0]
+const showEventLogButton = document.getElementById('show-xes-log')
+showEventLogButton.addEventListener('click', function(e){
+    let file = document.getElementById('xes-file-discovery').files[0]
     let formData = new FormData()
     formData.append('file', file)
     convertToCSV(formData)
     modalElt.classList.add('active');
 })
 
-const discoverBpmnButton = document.getElementById("discover-bpmn")
-discoverBpmnButton.addEventListener("click", function(e){
-    let file = fileUpload.files[0]
-    let noiseThreshold = document.getElementById("noise-threshold").value
+const discoverBpmnButton = document.getElementById('discover-bpmn')
+discoverBpmnButton.addEventListener('click', function(e){
+    discoverBpmnButton.classList.add('loading')
+    let file = document.getElementById('xes-file-discovery').files[0]
+    let noiseThreshold = document.getElementById('noise-threshold').value
     let formData = new FormData()
     formData.append('file', file)
     formData.append('noise', noiseThreshold)
-    getBPMNDiagram(formData)
+    getBPMNDiagram(formData).then(() => discoverBpmnButton.classList.remove('loading'))
+   
+
 })
 
 
-const conformanceButton = document.getElementById("compute-conformance")
+const conformanceButton = document.getElementById('compute-conformance')
 conformanceButton.addEventListener('click', function(e){
-    let file = document.getElementById("xes-file-conformance").files[0]
+    conformanceButton.classList.add('loading')
+    let file = document.getElementById('xes-file-conformance').files[0]
     let formData = new FormData()
     formData.append('file', file)
-    getAlignment(formData)
+    getAlignment(formData).then(() => conformanceButton.classList.remove('loading'))
 })
