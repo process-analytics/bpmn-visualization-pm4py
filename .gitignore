@@ -1,4 +1,7 @@
 backend/venv
+backend/result-with-layout.bpmn
+backend/result.bpmn
 frontend/node_modules
+frontend/package-lock.json
 .idea
 dist
