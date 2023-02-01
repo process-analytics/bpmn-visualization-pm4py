@@ -12,7 +12,9 @@
       "vite": "^4.0.0"
     },
     "dependencies": {
-      "bpmn-visualization": "^0.29.1"
+      "bpmn-visualization": "^0.29.1",
+      "d3": "^7.8.1",
+      "spectre.css": "^0.5.9"
     }
   }
   
