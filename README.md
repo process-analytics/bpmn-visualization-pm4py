@@ -1,7 +1,7 @@
 # Integration between `bpmn-visualization` and `pm4py`
 This is a template bootstrap for the integration example between [bpmn-visualization](https://github.com/process-analytics/bpmn-visualization-js/) and [PM4PY](https://github.com/pm4py).
 
-The complete code is available in the [develop](../tree/develop) branch.
+The complete code is available in the [develop](https://github.com/assynour/bpmn-visualization-pm4py/tree/develop) branch.
 
 ## Architecture
 The application consists of two main components: the frontend written in JavaScript and the backend written in Python. 
