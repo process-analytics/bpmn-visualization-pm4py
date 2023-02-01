@@ -1,11 +1,11 @@
 # Integration between `bpmn-visualization` and `pm4py`
 This is a template bootstrap for the integration example between [bpmn-visualization](https://github.com/process-analytics/bpmn-visualization-js/) and [PM4PY](https://github.com/pm4py).
 
-The complete code is available in the [develop](../develop) branch.
+The complete code is available in the [develop](../tree/develop) branch.
 
 ## Architecture
 The application consists of two main components: the frontend written in JavaScript and the backend written in Python. 
-* The frontend **bpmn-visualization** to visualize the BPMN process model and the statistics data over it. 
+* The frontend uses **bpmn-visualization** to visualize the BPMN process model and the statistics data over it. 
 * The backend is built using **pm4py** which processes data to perform process discovery and conformance checking. The results are then communicated to the frontend through [Flask](https://flask.palletsprojects.com/) and [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
 
 In addition to bpmn-visualization and pm4py, the application also leverages two other libraries, [d3](https://d3js.org/) and [BPMN layout generators](https://github.com/process-analytics/bpmn-layout-generators). 
