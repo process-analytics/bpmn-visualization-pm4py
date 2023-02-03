@@ -30,9 +30,12 @@ You will need [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) t
     command -v nvm
     ```
     4. If you run into problems, you can check the [complete documentation](https://github.com/nvm-sh/nvm#installing-and-updating).
-* `Node.js` and `npm`: Use `nvm` to install, and use, the current latest stable version of `Node.js` and `npm` by running: 
+* `Node.js` and `npm`: Use `nvm` to install, and use, the version of `Node.js` and `npm` defined in the `.nvmrc` file: 
   ```sh
-  nvm install --lts
+  nvm use
+  ```
+  ```sh
+  nvm install
   ```
   Verify it worked by running:
   ```sh
