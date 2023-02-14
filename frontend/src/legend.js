@@ -1,6 +1,15 @@
 import * as d3 from 'd3';
 
-//updated from: https://observablehq.com/@d3/color-legend
+/* 
+ * This function is derived from code in the https://observablehq.com/@d3/color-legend project,
+ * which is licensed under the ISC license.
+ *
+ * Original code:
+ * https://observablehq.com/@d3/color-legend
+ *
+ * ISC License:
+ * Copyright 2019–2020 Observable, Inc.
+ */
 export function colorLegend({colorScale, title} = {}) {
     const tickSize = 6
     const width = 320
