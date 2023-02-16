@@ -59,3 +59,11 @@ You can skip this part if your system meets all the requirements listed below ðŸ
     npm run dev
     ```
 5. Access the web application on the displayed localhost: http://localhost:5173/ 
+
+## License
+
+This project is licensed under the GPL-3.0 license because the backend part of the code uses the pm4py library, which is licensed under this license.
+
+The front end part of the code uses the bpmn-visualization library, which is licensed under the Apache-2.0 license. The legends in the project are generated using d3, which is licensed under the ISC license.
+
+Please note that the different licenses may have different requirements, so make sure to review the license terms carefully before using or contributing to this project.
