@@ -67,3 +67,18 @@ This project is licensed under the GPL-3.0 license because the backend part of t
 The front end part of the code uses the bpmn-visualization library, which is licensed under the Apache-2.0 license. The legends in the project are generated using d3, which is licensed under the ISC license.
 
 Please note that the different licenses may have different requirements, so make sure to review the license terms carefully before using or contributing to this project.
+
+## Release how-to
+
+When all updates have been completed, you are ready to publish a new release.
+
+Create a new GitHub release by following the [GitHub help](https://help.github.com/en/github/administering-a-repository/managing-releases-in-a-repository#creating-a-release)
+- for `Tag version`, use a value following the **vX.Y.Z** scheme using the [Semantic Versioning](https://semver.org/).
+- for `Target`
+    - usually, keep the `main` branch except if new commits that you don't want to integrate for the release are already
+      available in the branch
+    - in that case, choose a dedicated commit
+- Description
+    - briefly explain the contents of the new version
+    - make GitHub generates the [release notes automatically](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes)
+
