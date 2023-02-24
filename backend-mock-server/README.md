@@ -1,6 +1,6 @@
 # backend-mock-server
 
-Simulate the Python backend to ease the frontend developments.
+Simulate the [Python backend](../backend/README.md) to ease the frontend developments.
 
 This is a NodeJS server providing the same API as the backend.
 It is powered by the [Nest](https://github.com/nestjs/nest) framework and written in TypeScript.
