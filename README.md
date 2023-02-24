@@ -17,6 +17,7 @@ In addition to bpmn-visualization and pm4py, the application also leverages two 
 You can skip this part if your system meets all the requirements listed below 👇
 
 * [Backend requirements](./backend/README.md)
+* [Backend Mock Server requirements](./backend-mock-server/README.md) (only needed if you want to simulate the Backend during Frontend developments)
 * [Frontend requirements](./frontend/README.md)
 
 
