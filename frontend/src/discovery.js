@@ -5,11 +5,11 @@ import { FitType, ShapeBpmnElementKind } from 'bpmn-visualization';
 import { frequencyScale } from './colors.js'
 import { getFrequencyOverlay } from './overlays.js';
 import { colorLegend, overlayLegend } from './legend.js';
-import { getBpmnActivityElementbyName } from './utils.js';
+import { apiUrl, getBpmnActivityElementbyName } from './utils.js';
 
 export function getBPMNDiagram(formData) {
     console.log('Get bpmn...');
-    return fetch('http://localhost:6969/discover/inductive-miner', {
+    return fetch(`${apiUrl}/discover/inductive-miner`, {
             method: 'POST',
             body: formData
         }).then(response => response.text())
@@ -31,7 +31,7 @@ function visualizeBPMN(data) {
 
 function computeFrequency(){
     console.log('Compute frequency stats...');
-    fetch('http://localhost:6969/stats/frequency')
+    fetch(`${apiUrl}/stats/frequency`)
             .then(response => response.json())
             .then(data => visualizeFrequency(data))
             .catch(error => console.log(error))
@@ -61,23 +61,23 @@ function visualizeFrequency(data) {
             activityCell = mxGraph.getModel().getCell(activityElement.bpmnSemantic.id)
             //activityCurrentStyle = mxGraph.getCurrentCellStyle(activityCell)
             activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
-            
+
             mxGraph.getModel().beginUpdate()
-            try { 
+            try {
                 let style = mxgraph.mxUtils.setStyle(activityCurrentStyle, 'fillColor', myFrequencyScale(freqValue))
 				mxGraph.getModel().setStyle(activityCell, style);
                 activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
                 //different ways of setting the style
                 //mxGraph.setCellStyles("fillColor", myFrequencyScale(freqValue), [activityCell]);
                 //or
-                //mxGraph.setCellStyles(mxgraph.mxConstants.STYLE_FILLCOLOR, 'red', [activityCell]); 
+                //mxGraph.setCellStyles(mxgraph.mxConstants.STYLE_FILLCOLOR, 'red', [activityCell]);
 
                 //set label to white when the activity fillColor is above the scale average
                 if (freqValue > avg){
                     style = mxgraph.mxUtils.setStyle(activityCurrentStyle, 'fontColor', 'white')
 				    mxGraph.getModel().setStyle(activityCell, style);
                     //different way of setting the style
-                    //mxGraph.setCellStyles("fontColor", "white", [activityCell]); 
+                    //mxGraph.setCellStyles("fontColor", "white", [activityCell]);
                 }
             } finally {
                 mxGraph.getModel().endUpdate();
@@ -86,16 +86,16 @@ function visualizeFrequency(data) {
             //add frequency overlay
             globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
                 activityElement.bpmnSemantic.id,
-                getFrequencyOverlay(freqValue, max, 
+                getFrequencyOverlay(freqValue, max,
                                     myFrequencyScale(freqValue)))
-        }    
+        }
     }
 
     //add legend
     colorLegend({
         colorScale: myFrequencyScale,
         title: "Frequency of execution"
-    }) 
-    
+    })
+
     overlayLegend({rightOverlayLegend : "# executions"})
 }

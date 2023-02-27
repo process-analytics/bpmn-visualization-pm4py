@@ -1,5 +1,4 @@
-import { BpmnVisualization } from 'bpmn-visualization';
-
+import {BpmnVisualization} from 'bpmn-visualization';
 
 export default{
     bpmnVisualization : new BpmnVisualization({

@@ -3,12 +3,12 @@ import { mxgraph } from './mxgraph-initializer';
 import { violationScale } from './colors.js'
 import { colorLegend, overlayLegend } from './legend.js';
 import { getDeviationOverlay, getSynchronousOverlay } from './overlays.js'
-import { getBpmnActivityElementbyName } from './utils.js';
+import { apiUrl, getBpmnActivityElementbyName } from './utils.js';
 import { ShapeBpmnElementKind } from 'bpmn-visualization';
 
 export function getAlignment(formData) {
     console.log("Get alignments...");
-    return fetch('http://localhost:6969/conformance/alignment',{
+    return fetch(`${apiUrl}/conformance/alignment`,{
             method: 'POST',
             body: formData
         }).then(response => response.json())
@@ -45,11 +45,11 @@ function visualizeAlignment(alignedTraces){
 
     //remove overlays
     activities.forEach(act => globals.bpmnVisualization.bpmnElementsRegistry.removeAllOverlays(act.bpmnSemantic.id))
-    
+
 
     //set violation color
     for (const [activityName, violationRatio] of Object.entries(stats.normalizedStats)) {
-        const activityElement = getBpmnActivityElementbyName(activityName) 
+        const activityElement = getBpmnActivityElementbyName(activityName)
         if(activityElement){
             activityCell = mxGraph.getModel().getCell(activityElement.bpmnSemantic.id)
             activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
@@ -59,10 +59,10 @@ function visualizeAlignment(alignedTraces){
 				mxGraph.getModel().setStyle(activityCell, style);
                 activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
                 //different way of setting the style
-                //mxGraph.setCellStyles("fillColor", "red", [activityCell]); 
+                //mxGraph.setCellStyles("fillColor", "red", [activityCell]);
 
                 //set label to white when the activity fillColor is above the scale average
-                if(violationRatio > 0.5){ 
+                if(violationRatio > 0.5){
                     style = mxgraph.mxUtils.setStyle(activityCurrentStyle, 'fontColor', 'white')
 				    mxGraph.getModel().setStyle(activityCell, style);
                 }
@@ -73,8 +73,8 @@ function visualizeAlignment(alignedTraces){
             globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
                 activityElement.bpmnSemantic.id,
                 [
-                    getDeviationOverlay(stats.aggStats[activityName].modelMove, 
-                                        violationRatio, 
+                    getDeviationOverlay(stats.aggStats[activityName].modelMove,
+                                        violationRatio,
                                         myViolationScale(violationRatio*100)),
                     getSynchronousOverlay(stats.aggStats[activityName].syncMove)
                 ])
@@ -86,9 +86,9 @@ function visualizeAlignment(alignedTraces){
         colorScale: myViolationScale,
         title: "% deviations (model moves)"
       })
-    
+
     overlayLegend({
-        leftOverlayLegend: "# conformoties\n(synchronous moves)", 
+        leftOverlayLegend: "# conformoties\n(synchronous moves)",
         rightOverlayLegend : "# deviations\n(model moves)"})
 }
 
@@ -102,11 +102,11 @@ function getAlignmentDecorations(alignments){
         result[elt.bpmnSemantic.name] = {syncMove: 0, modelMove: 0}
         return result
     })
-    
+
     //convert the list aggStats to one object whose keys are the activity names
     aggStats = aggStats.reduce(function(obj,item){
         const key = Object.keys(item)[0]
-        obj[key] = item[key]; 
+        obj[key] = item[key];
         return obj;
       }, {});
 
@@ -118,7 +118,7 @@ function getAlignmentDecorations(alignments){
             //pair[0] is a trace_move, pair[1] is a model_move
             if(pair[1] && pair[1] != '>>'){ //pair[1] is not null (tau transitions from petri net) and it is not a log move
                 pair[1] === pair[0]? aggStats[pair[1]].syncMove++ : aggStats[pair[1]].modelMove++
-            }   
+            }
         }
     }
 
