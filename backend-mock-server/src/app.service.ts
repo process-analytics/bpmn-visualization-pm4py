@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { diagram } from './assets/diagram';
 
 type FrequencyStats = { [index: string]: number };
+type ConformanceAlignment = Array<{ alignment: Array<Array<string>> }>;
 
 @Injectable()
 export class AppService {
@@ -19,12 +20,12 @@ export class AppService {
     };
   }
 
-  // TODO introduce ConformanceAlignment type
-  getConformanceAlignment(): any {
+  getConformanceAlignment(): ConformanceAlignment {
     return [
-      { alignment: ['Assign Approver', 'Approve Invoice'] },
-      { alignment: ['Assign Approver', 'Approve Invoice'] },
-      { alignment: ['Approve Invoice', 'Approve Invoice'] },
+      { alignment: [['Assign Approver', 'Assign Approver'], ['>>', 'Approve Invoice'], ['Prepare Bank Transfer', 'Prepare Bank Transfer'], ['>>', 'Archive Invoice']] },
+      { alignment: [['Assign Approver', '>>'], ['Approve Invoice', 'Approve Invoice'], ['>>', 'Prepare Bank Transfer'], ['Archive Invoice', 'Archive Invoice']]  },
+      { alignment: [['Assign Approver', 'Assign Approver'], ['Approve Invoice', 'Approve Invoice'], ['>>', 'Prepare Bank Transfer'], ['>>', 'Archive Invoice']] },
+      { alignment: [['>>', 'Assign Approver'], ['>>', 'Approve Invoice'], ['>>', 'Prepare Bank Transfer'], ['Archive Invoice', 'Archive Invoice']] },
     ];
   }
 
