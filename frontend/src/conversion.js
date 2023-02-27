@@ -8,7 +8,7 @@ export function convertToCSV(formData){
 }
 
 function visualizeCSV(data){
-    console.log(data)
+    console.log('visualizeCSV - data:', data)
     // Get a reference to the table
     let table = document.getElementById("xes-log-table");
     table.innerHTML = data
