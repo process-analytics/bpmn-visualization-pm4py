@@ -22,10 +22,10 @@ export class AppService {
 
   getConformanceAlignment(): ConformanceAlignment {
     return [
-      { alignment: [['Approve Invoice', 'Assign Approver']] },
-      { alignment: [['Assign Approver', 'Approve Invoice']] },
-      { alignment: [['Assign Approver', 'Approve Invoice']] },
-      { alignment: [['Approve Invoice', 'Approve Invoice']] },
+      { alignment: [['Assign Approver', 'Assign Approver'], ['>>', 'Approve Invoice'], ['Prepare Bank Transfer', 'Prepare Bank Transfer'], ['>>', 'Archive Invoice']] },
+      { alignment: [['Assign Approver', '>>'], ['Approve Invoice', 'Approve Invoice'], ['>>', 'Prepare Bank Transfer'], ['Archive Invoice', 'Archive Invoice']]  },
+      { alignment: [['Assign Approver', 'Assign Approver'], ['Approve Invoice', 'Approve Invoice'], ['>>', 'Prepare Bank Transfer'], ['>>', 'Archive Invoice']] },
+      { alignment: [['>>', 'Assign Approver'], ['>>', 'Approve Invoice'], ['>>', 'Prepare Bank Transfer'], ['Archive Invoice', 'Archive Invoice']] },
     ];
   }
 
