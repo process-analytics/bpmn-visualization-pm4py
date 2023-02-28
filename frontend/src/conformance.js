@@ -3,7 +3,7 @@ import { violationScale } from './colors.js'
 import { colorLegend, overlayLegend } from './legend.js';
 import { getDeviationOverlay, getSynchronousOverlay } from './overlays.js'
 import { getBpmnActivityElementbyName } from './utils.js';
-import {mxgraph, ShapeBpmnElementKind} from 'bpmn-visualization';
+import { mxgraph, ShapeBpmnElementKind } from 'bpmn-visualization';
 
 export function getAlignment(formData) {
     console.log("Get alignments...");
@@ -44,10 +44,11 @@ function visualizeAlignment(alignedTraces){
 
     //set violation color
     graph.getModel().beginUpdate()
-    try {for (const [activityName, violationRatio] of Object.entries(stats.normalizedStats)) {
-        const activityElement = getBpmnActivityElementbyName(activityName)
-        if(activityElement){
-            const activityCell = graph.getModel().getCell(activityElement.bpmnSemantic.id)
+    try {
+        for (const [activityName, violationRatio] of Object.entries(stats.normalizedStats)) {
+            const activityElement = getBpmnActivityElementbyName(activityName)
+            if (activityElement) {
+                const activityCell = graph.getModel().getCell(activityElement.bpmnSemantic.id)
                 let style = graph.getModel().getStyle(activityCell)
                 style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myViolationScale(violationRatio * 100))
                 //set label to white when the activity fillColor is above the scale average
