@@ -1,7 +1,6 @@
 import globals from './globals.js';
-import { mxgraph } from './mxgraph-initializer';
 
-import { FitType, ShapeBpmnElementKind } from 'bpmn-visualization';
+import { FitType, mxgraph, ShapeBpmnElementKind } from 'bpmn-visualization';
 import { frequencyScale } from './colors.js'
 import { getFrequencyOverlay } from './overlays.js';
 import { colorLegend, overlayLegend } from './legend.js';
@@ -47,48 +46,33 @@ function visualizeFrequency(data) {
     const myFrequencyScale = frequencyScale(0, max)
 
     //change activity style through mxGraph
-    /**
-     * A high level API will be provided: see https://github.com/process-analytics/bpmn-visualization-R/issues/13
-     */
-    let mxGraph = globals.bpmnVisualization.graph
-    let activityCurrentStyle = null
-    let activityCell = null
+    let graph = globals.bpmnVisualization.graph
 
-    //iterate over the activites and set their color by calling the frequency color scale function
-    for (const [activityName, freqValue] of Object.entries(data)) {
-        const activityElement = getBpmnActivityElementbyName(activityName)
-        if(activityElement){
-            activityCell = mxGraph.getModel().getCell(activityElement.bpmnSemantic.id)
-            //activityCurrentStyle = mxGraph.getCurrentCellStyle(activityCell)
-            activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
+    try {
+        //iterate over the activities and set their color by calling the frequency color scale function
+        for (const [activityName, freqValue] of Object.entries(data)) {
+            const activityElement = getBpmnActivityElementbyName(activityName)
+            if (activityElement) {
+                const activityCell = graph.getModel().getCell(activityElement.bpmnSemantic.id)
 
-            mxGraph.getModel().beginUpdate()
-            try {
-                let style = mxgraph.mxUtils.setStyle(activityCurrentStyle, 'fillColor', myFrequencyScale(freqValue))
-				mxGraph.getModel().setStyle(activityCell, style);
-                activityCurrentStyle = mxGraph.getModel().getStyle(activityCell)
-                //different ways of setting the style
-                //mxGraph.setCellStyles("fillColor", myFrequencyScale(freqValue), [activityCell]);
-                //or
-                //mxGraph.setCellStyles(mxgraph.mxConstants.STYLE_FILLCOLOR, 'red', [activityCell]);
+                let style = graph.getModel().getStyle(activityCell);
 
-                //set label to white when the activity fillColor is above the scale average
-                if (freqValue > avg){
-                    style = mxgraph.mxUtils.setStyle(activityCurrentStyle, 'fontColor', 'white')
-				    mxGraph.getModel().setStyle(activityCell, style);
-                    //different way of setting the style
-                    //mxGraph.setCellStyles("fontColor", "white", [activityCell]);
+             style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqValue))
+                if (freqValue > avg) {
+                    style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FONTCOLOR, 'white')
                 }
-            } finally {
-                mxGraph.getModel().endUpdate();
-            }
+                graph.getModel().setStyle(activityCell, style);
 
             //add frequency overlay
             globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
                 activityElement.bpmnSemantic.id,
                 getFrequencyOverlay(freqValue, max,
                                     myFrequencyScale(freqValue)))
-        }
+        }}
+        // Allow to save the style in a new state, in particular keep the rounded activity
+        graph.refresh();
+    } finally {
+        graph.getModel().endUpdate();
     }
 
     //add legend
