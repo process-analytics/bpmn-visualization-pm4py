@@ -1,10 +1,9 @@
 import globals from './globals.js';
-import { mxgraph } from './mxgraph-initializer';
 import { violationScale } from './colors.js'
 import { colorLegend, overlayLegend } from './legend.js';
 import { getDeviationOverlay, getSynchronousOverlay } from './overlays.js'
 import { getBpmnActivityElementbyName } from './utils.js';
-import { ShapeBpmnElementKind } from 'bpmn-visualization';
+import { mxgraph, ShapeBpmnElementKind } from 'bpmn-visualization';
 
 export function getAlignment(formData) {
     console.log("Get alignments...");

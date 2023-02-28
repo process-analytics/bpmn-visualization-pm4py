@@ -1,7 +1,6 @@
 import globals from './globals.js';
-import { mxgraph } from './mxgraph-initializer';
 
-import { FitType, ShapeBpmnElementKind } from 'bpmn-visualization';
+import { FitType, mxgraph, ShapeBpmnElementKind } from 'bpmn-visualization';
 import { frequencyScale } from './colors.js'
 import { getFrequencyOverlay } from './overlays.js';
 import { colorLegend, overlayLegend } from './legend.js';
@@ -56,18 +55,19 @@ function visualizeFrequency(data) {
             if (activityElement) {
                 const activityCell = graph.getModel().getCell(activityElement.bpmnSemantic.id)
                 let style = graph.getModel().getStyle(activityCell);
-                style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqValue))
+
+             style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqValue))
                 if (freqValue > avg) {
                     style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FONTCOLOR, 'white')
                 }
                 graph.getModel().setStyle(activityCell, style);
 
-                //add frequency overlay
-                globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
-                  activityElement.bpmnSemantic.id,
-                  getFrequencyOverlay(freqValue, max, myFrequencyScale(freqValue)))
-            }
-        }
+            //add frequency overlay
+            globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
+                activityElement.bpmnSemantic.id,
+                getFrequencyOverlay(freqValue, max,
+                                    myFrequencyScale(freqValue)))
+        }}
         // Allow to save the style in a new state, in particular keep the rounded activity
         graph.refresh();
     } finally {
