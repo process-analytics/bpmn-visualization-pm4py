@@ -1,6 +1,6 @@
 import globals from './globals.js';
 
-import {FitType, mxgraph, ShapeBpmnElementKind} from 'bpmn-visualization';
+import { FitType, mxgraph, ShapeBpmnElementKind } from 'bpmn-visualization';
 import { frequencyScale } from './colors.js'
 import { getFrequencyOverlay } from './overlays.js';
 import { colorLegend, overlayLegend } from './legend.js';
