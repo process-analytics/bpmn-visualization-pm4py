@@ -94,12 +94,11 @@ function getAlignmentDecorations(alignments){
         result[elt.bpmnSemantic.name] = {syncMove: 0, modelMove: 0}
         return result
     })
-
-    //convert the list aggStats to one object whose keys are the activity names
-    .reduce((obj, item) =>{
-        const key = Object.keys(item)[0]
-        obj[key] = item[key];
-        return obj;
+      //convert the list aggStats to one object whose keys are the activity names
+      .reduce((obj, item) => {
+          const key = Object.keys(item)[0]
+          obj[key] = item[key];
+          return obj;
       }, {});
 
     //extract the alignments
