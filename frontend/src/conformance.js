@@ -82,7 +82,7 @@ function visualizeAlignment(alignedTraces){
       })
 
     overlayLegend({
-        leftOverlayLegend: "# conformoties\n(synchronous moves)",
+        leftOverlayLegend: "# conformities\n(synchronous moves)",
         rightOverlayLegend : "# deviations\n(model moves)"})
 }
 
