@@ -1,5 +1,6 @@
 import { BpmnVisualization } from 'bpmn-visualization';
 
+
 export default{
     bpmnVisualization : new BpmnVisualization({
         container: 'bpmn-container',
