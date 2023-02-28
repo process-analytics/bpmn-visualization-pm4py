@@ -6,3 +6,6 @@ export function getBpmnActivityElementbyName(activityName){
     }
     return null
 }
+
+// for both backend and backend-mock-server
+export const apiUrl = 'http://localhost:6969';

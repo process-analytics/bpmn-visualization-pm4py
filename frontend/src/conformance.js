@@ -2,12 +2,12 @@ import globals from './globals.js';
 import { violationScale } from './colors.js'
 import { colorLegend, overlayLegend } from './legend.js';
 import { getDeviationOverlay, getSynchronousOverlay } from './overlays.js'
-import { getBpmnActivityElementbyName } from './utils.js';
+import { apiUrl, getBpmnActivityElementbyName } from './utils.js';
 import { mxgraph, ShapeBpmnElementKind } from 'bpmn-visualization';
 
 export function getAlignment(formData) {
     console.log("Get alignments...");
-    return fetch('http://localhost:6969/conformance/alignment',{
+    return fetch(`${apiUrl}/conformance/alignment`,{
             method: 'POST',
             body: formData
         }).then(response => response.json())

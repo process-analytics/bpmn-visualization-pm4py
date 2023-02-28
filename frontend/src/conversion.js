@@ -1,5 +1,7 @@
+import { apiUrl } from "./utils.js";
+
 export function convertToCSV(formData){
-    fetch('http://localhost:6969/conversion/xes-to-csv', {
+    fetch(`${apiUrl}/conversion/xes-to-csv`, {
         method: 'POST',
         body: formData
     }).then(response => response.json())

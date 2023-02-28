@@ -4,11 +4,11 @@ import { FitType, mxgraph, ShapeBpmnElementKind } from 'bpmn-visualization';
 import { frequencyScale } from './colors.js'
 import { getFrequencyOverlay } from './overlays.js';
 import { colorLegend, overlayLegend } from './legend.js';
-import { getBpmnActivityElementbyName } from './utils.js';
+import { apiUrl, getBpmnActivityElementbyName } from './utils.js';
 
 export function getBPMNDiagram(formData) {
     console.log('Get bpmn...');
-    return fetch('http://localhost:6969/discover/inductive-miner', {
+    return fetch(`${apiUrl}/discover/inductive-miner`, {
             method: 'POST',
             body: formData
         }).then(response => response.text())
@@ -30,7 +30,7 @@ function visualizeBPMN(data) {
 
 function computeFrequency(){
     console.log('Compute frequency stats...');
-    fetch('http://localhost:6969/stats/frequency')
+    fetch(`${apiUrl}/stats/frequency`)
             .then(response => response.json())
             .then(data => visualizeFrequency(data))
             .catch(error => console.log(error))
@@ -55,19 +55,19 @@ function visualizeFrequency(data) {
             if (activityElement) {
                 const activityCell = graph.getModel().getCell(activityElement.bpmnSemantic.id)
                 let style = graph.getModel().getStyle(activityCell);
+                style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqValue))
 
-             style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqValue))
                 if (freqValue > avg) {
                     style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FONTCOLOR, 'white')
                 }
                 graph.getModel().setStyle(activityCell, style);
 
-            //add frequency overlay
-            globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
-                activityElement.bpmnSemantic.id,
-                getFrequencyOverlay(freqValue, max,
-                                    myFrequencyScale(freqValue)))
-        }}
+                //add frequency overlay
+                globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
+                  activityElement.bpmnSemantic.id,
+                  getFrequencyOverlay(freqValue, max, myFrequencyScale(freqValue)))
+            }
+        }
         // Allow to save the style in a new state, in particular keep the rounded activity
         graph.refresh();
     } finally {
