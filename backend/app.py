@@ -4,7 +4,8 @@ from flask_cors import CORS
 
 import pm4py
 from pm4py.objects.log.importer.xes import importer as xes_importer
-from enum import Enum
+from pm4py.objects.conversion.bpmn.variants.to_petri_net import Parameters as PARAMS_CONVERTER, apply as petri_net_converter
+from pm4py.visualization.petri_net import visualizer as petri_net_visualizer
 
 import subprocess #to execute the layout-generator jar file
 
@@ -15,6 +16,10 @@ class Parameters:
     PETRI_NET = None
     IM = None
     FM = None
+    #store the mapping between bpmn and petrinet
+    #will be used to be able to compute statistics related to edges and gateways
+    FLOW_PLACE = {}
+    TRANS_MAP = {}
 
 app = Flask(__name__)
 CORS(app)
@@ -29,11 +34,16 @@ def discover_inductive_miner():
     #create pm4py event log object
     Parameters.EVENT_LOG_DISCOVERY = xes_importer.deserialize(log_stream)
 
-    #discover petri net
-    Parameters.PETRI_NET, Parameters.IM, Parameters.FM = pm4py.discover_petri_net_inductive(Parameters.EVENT_LOG_DISCOVERY, noise_threshold=float(noise))
+    #discover bpmn
+    Parameters.BPMN_MODEL = pm4py.discover_bpmn_inductive(Parameters.EVENT_LOG_DISCOVERY, noise_threshold=float(noise))
 
-    #convert petri net to bpmn
-    Parameters.BPMN_MODEL = pm4py.convert_to_bpmn(Parameters.PETRI_NET, Parameters.IM, Parameters.FM)
+    #convert bpmn to petri net to be able to replay log and compute frequency and conformance data
+    #use the new fix by pm4py to return the mapping between bpmn and petri net
+    parameters = {
+        PARAMS_CONVERTER.RETURN_FLOW_TRANS_MAP.value: True,
+        PARAMS_CONVERTER.ENABLE_REDUCTION.value: True
+    }
+    Parameters.PETRI_NET, Parameters.IM, Parameters.FM, Parameters.FLOW_PLACE, Parameters.TRANS_MAP = petri_net_converter(Parameters.BPMN_MODEL, parameters)
 
     #generate the layout using layout-generators
     '''
