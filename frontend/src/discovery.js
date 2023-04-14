@@ -42,11 +42,11 @@ function visualizeFrequency(data) {
     // Preprocess data to replace the tuples in the form (source_id, target_id) with the edge id
     for (const key of Object.keys(data)) {
         // Check if the key matches the pattern (source_id,target_id)
-        const match = key.match(/\((\w+),\s*(\w+)\)/);
+        const match = key.match(/\('([^']+)'\s*,\s*'([^']+)'\)/);
         if (match) {
             // Extract the source and target ids
-            const source_id = match[0];
-            const target_id = match[1];
+            const source_id = match[1];
+            const target_id = match[2];
             // Get the edge id
             const edge_id = findEdgeId(source_id, target_id);
             if (edge_id !== null) {
@@ -59,6 +59,7 @@ function visualizeFrequency(data) {
             }
         }
     }
+
     //set the frequency color scale
     const values = Object.values(data);
     const statistics = values.map(Number); // Convert strings to numbers
@@ -74,21 +75,32 @@ function visualizeFrequency(data) {
         for (const [eltId, freqValue] of Object.entries(data)) {
             const freqNum = parseInt(freqValue);
             const bpmnElement = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(eltId)[0];
-            // Update style of activity element
-            if (bpmnElement && bpmnElement.bpmnSemantic.isShape) {
-                const activityCell = graph.getModel().getCell(bpmnElement.bpmnSemantic.id);
-                let style = graph.getModel().getStyle(activityCell);
-                style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqNum));
+            if(bpmnElement){
+                // Update style of activity element
+                if (bpmnElement.bpmnSemantic.isShape) {
+                    const activityCell = graph.getModel().getCell(bpmnElement.bpmnSemantic.id);
+                    let style = graph.getModel().getStyle(activityCell);
+                    style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqNum));
 
-                if (freqNum > avg) {
-                    style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FONTCOLOR, 'white');
+                    if (freqNum > avg) {
+                        style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FONTCOLOR, 'white');
+                    }
+                    graph.getModel().setStyle(activityCell, style);
+
+                    //add frequency overlay
+                    globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
+                        bpmnElement.bpmnSemantic.id,
+                        getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'top-right'));
                 }
-                graph.getModel().setStyle(activityCell, style);
-
-                //add frequency overlay
-                globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
-                  bpmnElement.bpmnSemantic.id,
-                  getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum)));
+                // Add overlay on edge
+                else {
+                    globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
+                        bpmnElement.bpmnSemantic.id,
+                        getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'middle'));
+                }
+            }
+            else{
+                console.log(`did not find the element of id ${eltId}`)
             }
         }
         // Allow to save the style in a new state, in particular keep the rounded activity
@@ -109,13 +121,11 @@ function visualizeFrequency(data) {
 function findEdgeId(source_id, target_id) {
     const edgesIds = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(source_id)[0].bpmnSemantic.outgoingIds;
     for (const edgeId of edgesIds) {
-      const outgoingActivitiesIds = globals.bpmnVisualization.bpmnActivityElements.getElementsByIds(edgeId)[0].bpmnSemantic.outgoingIds;
-      for (const outgoingActivityId of outgoingActivitiesIds) {
-        if (outgoingActivityId === target_id) {
+      const targetActivityId = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(edgeId)[0].bpmnSemantic.targetRefId;
+        if (targetActivityId === target_id) {
           // Found the edge ID
           return edgeId;
         }
-      }
     }
     // Edge not found
     return null;
