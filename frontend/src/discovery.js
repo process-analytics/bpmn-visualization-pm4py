@@ -13,19 +13,19 @@ export function getBPMNDiagram(formData) {
             body: formData
         }).then(response => response.text())
           .then(data => visualizeBPMN(data))
-          .catch(error => console.log(error))
+          .catch(error => console.log(error));
 }
 
 function visualizeBPMN(data) {
-    console.log("BPMN data received!")
+    console.log('BPMN data received!')
     //load
     globals.bpmnVisualization.load(data, {
         fit: { type: FitType.Center }
     });
 
     //update the list of bpmn activities
-    globals.bpmnActivityElements = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByKinds(ShapeBpmnElementKind.TASK)
-    computeFrequency()
+    globals.bpmnActivityElements = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByKinds(ShapeBpmnElementKind.TASK);
+    computeFrequency();
 }
 
 function computeFrequency(){
@@ -37,7 +37,7 @@ function computeFrequency(){
 }
 
 function visualizeFrequency(data) {
-    console.log("Frequency stats received!")
+    console.log('Frequency stats received!');
 
     // Preprocess data to replace the tuples in the form (source_id, target_id) with the edge id
     for (const key of Object.keys(data)) {
@@ -64,31 +64,31 @@ function visualizeFrequency(data) {
     const statistics = values.map(Number); // Convert strings to numbers
     const max = Math.max(...statistics);
     const avg = max/2;
-    const myFrequencyScale = frequencyScale(0, max)
+    const myFrequencyScale = frequencyScale(0, max);
 
     //change activity style through mxGraph
-    let graph = globals.bpmnVisualization.graph
+    let graph = globals.bpmnVisualization.graph;
 
     try {
         //iterate over the elements (activities and edges) and set their color by calling the frequency color scale function
         for (const [eltId, freqValue] of Object.entries(data)) {
             const freqNum = parseInt(freqValue);
-            const bpmnElement = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(eltId)[0]
+            const bpmnElement = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(eltId)[0];
             // Update style of activity element
             if (bpmnElement && bpmnElement.bpmnSemantic.isShape) {
-                const activityCell = graph.getModel().getCell(bpmnElement.bpmnSemantic.id)
+                const activityCell = graph.getModel().getCell(bpmnElement.bpmnSemantic.id);
                 let style = graph.getModel().getStyle(activityCell);
-                style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqNum))
+                style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqNum));
 
                 if (freqNum > avg) {
-                    style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FONTCOLOR, 'white')
+                    style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FONTCOLOR, 'white');
                 }
                 graph.getModel().setStyle(activityCell, style);
 
                 //add frequency overlay
                 globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
                   bpmnElement.bpmnSemantic.id,
-                  getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum)))
+                  getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum)));
             }
         }
         // Allow to save the style in a new state, in particular keep the rounded activity
@@ -100,10 +100,10 @@ function visualizeFrequency(data) {
     //add legend
     colorLegend({
         colorScale: myFrequencyScale,
-        title: "Frequency of execution"
-    })
+        title: 'Frequency of execution'
+    });
 
-    overlayLegend({rightOverlayLegend : "# executions"})
+    overlayLegend({rightOverlayLegend : '# executions'});
 }
 
 function findEdgeId(source_id, target_id) {
