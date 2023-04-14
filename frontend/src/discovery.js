@@ -4,7 +4,7 @@ import { FitType, mxgraph, ShapeBpmnElementKind } from 'bpmn-visualization';
 import { frequencyScale } from './colors.js'
 import { getFrequencyOverlay } from './overlays.js';
 import { colorLegend, overlayLegend } from './legend.js';
-import { apiUrl, getBpmnActivityElementbyName } from './utils.js';
+import { apiUrl } from './utils.js';
 
 export function getBPMNDiagram(formData) {
     console.log('Get bpmn...');
@@ -70,23 +70,25 @@ function visualizeFrequency(data) {
     let graph = globals.bpmnVisualization.graph
 
     try {
-        //iterate over the activities and set their color by calling the frequency color scale function
-        for (const [activityName, freqValue] of Object.entries(data)) {
-            const activityElement = getBpmnActivityElementbyName(activityName)
-            if (activityElement) {
-                const activityCell = graph.getModel().getCell(activityElement.bpmnSemantic.id)
+        //iterate over the elements (activities and edges) and set their color by calling the frequency color scale function
+        for (const [eltId, freqValue] of Object.entries(data)) {
+            const freqNum = parseInt(freqValue);
+            const bpmnElement = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(eltId)[0]
+            // Update style of activity element
+            if (bpmnElement && bpmnElement.bpmnSemantic.isShape) {
+                const activityCell = graph.getModel().getCell(bpmnElement.bpmnSemantic.id)
                 let style = graph.getModel().getStyle(activityCell);
-                style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqValue))
+                style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqNum))
 
-                if (freqValue > avg) {
+                if (freqNum > avg) {
                     style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FONTCOLOR, 'white')
                 }
                 graph.getModel().setStyle(activityCell, style);
 
                 //add frequency overlay
                 globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
-                  activityElement.bpmnSemantic.id,
-                  getFrequencyOverlay(freqValue, max, myFrequencyScale(freqValue)))
+                  bpmnElement.bpmnSemantic.id,
+                  getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum)))
             }
         }
         // Allow to save the style in a new state, in particular keep the rounded activity
