@@ -39,6 +39,23 @@ function computeFrequency(){
 function visualizeFrequency(data) {
     console.log("Frequency stats received!")
 
+    // Preprocess data to replace the tuples in the form (source_id, target_id) with the edge id
+    for (const key of Object.keys(data)) {
+        // Check if the key matches the pattern (source_id,target_id)
+        if (Array.isArray(key) && key.length === 2) {
+            // Get the edge id
+            const [source_id, target_id] = key;
+            const edge_id = findEdgeId(source_id, target_id);
+            if (edge_id !== null) {
+                console.log(`Found edge ${edge_id} connecting activities ${source_id} and ${target_id}`);
+                const value = data[key];
+                data[edge_id] = value; // Create a new key with the same value
+                delete data[key]; // Delete the original key
+            } else {
+                console.log(`No edge found connecting activities ${source_id} and ${target_id}`);
+            }
+        }
+    }
     //set the frequency color scale
     const values = Object.values(data);
     const max = Math.max(...values);
@@ -82,3 +99,18 @@ function visualizeFrequency(data) {
 
     overlayLegend({rightOverlayLegend : "# executions"})
 }
+
+function findEdgeId(source_id, target_id) {
+    const edgesIds = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(source_id)[0].bpmnSemantic.outgoingIds;
+    for (const edgeId of edgesIds) {
+      const outgoingActivitiesIds = globals.bpmnVisualization.bpmnActivityElements.getElementsByIds(edgeId)[0].bpmnSemantic.outgoingIds;
+      for (const outgoingActivityId of outgoingActivitiesIds) {
+        if (outgoingActivityId === target_id) {
+          // Found the edge ID
+          return edgeId;
+        }
+      }
+    }
+    // Edge not found
+    return null;
+  }
