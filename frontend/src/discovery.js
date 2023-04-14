@@ -42,9 +42,12 @@ function visualizeFrequency(data) {
     // Preprocess data to replace the tuples in the form (source_id, target_id) with the edge id
     for (const key of Object.keys(data)) {
         // Check if the key matches the pattern (source_id,target_id)
-        if (Array.isArray(key) && key.length === 2) {
+        const match = key.match(/\((\w+),\s*(\w+)\)/);
+        if (match) {
+            // Extract the source and target ids
+            const source_id = match[0];
+            const target_id = match[1];
             // Get the edge id
-            const [source_id, target_id] = key;
             const edge_id = findEdgeId(source_id, target_id);
             if (edge_id !== null) {
                 console.log(`Found edge ${edge_id} connecting activities ${source_id} and ${target_id}`);
@@ -58,7 +61,8 @@ function visualizeFrequency(data) {
     }
     //set the frequency color scale
     const values = Object.values(data);
-    const max = Math.max(...values);
+    const statistics = values.map(Number); // Convert strings to numbers
+    const max = Math.max(...statistics);
     const avg = max/2;
     const myFrequencyScale = frequencyScale(0, max)
 
