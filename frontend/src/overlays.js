@@ -29,7 +29,7 @@ export function getSynchronousOverlay(label){
     }
 }
 
-export function getFrequencyOverlay(freqValue, freqMax, color){
+export function getFrequencyOverlay(freqValue, freqMax, color, position){
     let fontColor = "none"
     if(freqValue > freqMax / 2){
         fontColor = "white"
@@ -38,7 +38,7 @@ export function getFrequencyOverlay(freqValue, freqMax, color){
         fontColor = "black"
     }
     return {
-        position: 'top-right',
+        position: position,
         label: `${freqValue}`,
         style: {
         font: { color: fontColor, size: 20 },
