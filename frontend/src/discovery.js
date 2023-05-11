@@ -75,10 +75,7 @@ function visualizeFrequency(data) {
         if(bpmnElement){
             // Update style of activity element
             if (bpmnElement.bpmnSemantic.isShape) {
-                let fontColor = 'default';
-                if (freqNum > avg) {
-                    fontColor = 'white';
-                }
+                const fontColor = freqNum > avg ? 'white' : 'default';
 
                 globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(eltId,{
                     fill: {
