@@ -67,46 +67,40 @@ function visualizeFrequency(data) {
     const avg = max/2;
     const myFrequencyScale = frequencyScale(0, max);
 
-    //change activity style through mxGraph
-    let graph = globals.bpmnVisualization.graph;
+    //iterate over the elements (activities and edges) and set their color by calling the frequency color scale function
+    for (const [eltId, freqValue] of Object.entries(data)) {
+        const freqNum = parseInt(freqValue);
+        const bpmnElement = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(eltId)[0];
+        
+        if(bpmnElement){
+            // Update style of activity element
+            if (bpmnElement.bpmnSemantic.isShape) {
+                const fontColor = freqNum > avg ? 'white' : 'default';
 
-    try {
-        //iterate over the elements (activities and edges) and set their color by calling the frequency color scale function
-        for (const [eltId, freqValue] of Object.entries(data)) {
-            const freqNum = parseInt(freqValue);
-            const bpmnElement = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(eltId)[0];
-            if(bpmnElement){
-                // Update style of activity element
-                if (bpmnElement.bpmnSemantic.isShape) {
-                    const activityCell = graph.getModel().getCell(bpmnElement.bpmnSemantic.id);
-                    let style = graph.getModel().getStyle(activityCell);
-                    style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myFrequencyScale(freqNum));
-
-                    if (freqNum > avg) {
-                        style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FONTCOLOR, 'white');
+                globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(eltId,{
+                    fill: {
+                        color: myFrequencyScale(freqNum)
+                    },
+                    font: {
+                        color: fontColor
                     }
-                    graph.getModel().setStyle(activityCell, style);
+                });
 
-                    //add frequency overlay
-                    globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
-                        bpmnElement.bpmnSemantic.id,
-                        getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'top-right'));
-                }
-                // Add overlay on edge
-                else {
-                    globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
-                        bpmnElement.bpmnSemantic.id,
-                        getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'middle'));
-                }
+                //add frequency overlay
+                globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
+                    bpmnElement.bpmnSemantic.id,
+                    getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'top-right'));
             }
-            else{
-                console.log(`did not find the element of id ${eltId}`)
+            // Add overlay on edge
+            else {
+                globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
+                    bpmnElement.bpmnSemantic.id,
+                    getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'middle'));
             }
         }
-        // Allow to save the style in a new state, in particular keep the rounded activity
-        graph.refresh();
-    } finally {
-        graph.getModel().endUpdate();
+        else{
+            console.log(`did not find the element of id ${eltId}`)
+        }
     }
 
     //add legend

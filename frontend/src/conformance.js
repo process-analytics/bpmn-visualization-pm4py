@@ -3,7 +3,7 @@ import { violationScale } from './colors.js'
 import { colorLegend, overlayLegend } from './legend.js';
 import { getDeviationOverlay, getSynchronousOverlay } from './overlays.js'
 import { apiUrl, getBpmnActivityElementbyName } from './utils.js';
-import { mxgraph, ShapeBpmnElementKind } from 'bpmn-visualization';
+import { mxgraph, ShapeBpmnElementKind, FlowKind } from 'bpmn-visualization';
 
 export function getAlignment(formData) {
     console.log("Get alignments...");
@@ -25,53 +25,56 @@ function visualizeAlignment(alignedTraces){
     //set the violation color
     const graph = globals.bpmnVisualization.graph
 
-    // first reset fill and font color
-    // and remove overlays if existing
-    const activities = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByKinds(ShapeBpmnElementKind.TASK)
-    const activityCells = activities.map(elt => graph.getModel().getCell(elt.bpmnSemantic.id))
+    // reset fill and font color for activities
+    const activities = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByKinds(ShapeBpmnElementKind.TASK);
+    const activitiesIds = activities.map(elt => elt.bpmnSemantic.id);
+    globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(activitiesIds, {
+        fill:{
+            color: 'default'
+        },
+        font: {
+            color: 'default'
+        }
+    });
 
-    graph.getModel().beginUpdate()
-    try {
-        mxgraph.mxUtils.setCellStyles(graph.getModel(), activityCells, mxgraph.mxConstants.STYLE_FILLCOLOR, "none")
-        mxgraph.mxUtils.setCellStyles(graph.getModel(), activityCells, mxgraph.mxConstants.STYLE_FONTCOLOR, "none")
-    } finally {
-        graph.getModel().endUpdate();
-    }
+    // reset color and width for edges
+    const edges = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByKinds(FlowKind.SEQUENCE_FLOW);
+    const edgesIds = edges.map(elt => elt.bpmnSemantic.id);
+    globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(edgesIds, {
+        stroke:{
+            color: 'default'
+        },
+        width: 'default'
+    });
 
     //remove overlays
     activities.forEach(act => globals.bpmnVisualization.bpmnElementsRegistry.removeAllOverlays(act.bpmnSemantic.id))
+    edges.forEach(edge => globals.bpmnVisualization.bpmnElementsRegistry.removeAllOverlays(edge.bpmnSemantic.id))
 
-
-    //set violation color
-    graph.getModel().beginUpdate()
-    try {
-        for (const [activityName, violationRatio] of Object.entries(stats.normalizedStats)) {
-            const activityElement = getBpmnActivityElementbyName(activityName)
-            if (activityElement) {
-                const activityCell = graph.getModel().getCell(activityElement.bpmnSemantic.id)
-                let style = graph.getModel().getStyle(activityCell)
-                style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FILLCOLOR, myViolationScale(violationRatio * 100))
-                //set label to white when the activity fillColor is above the scale average
-                if (violationRatio > 0.5) {
-                    style = mxgraph.mxUtils.setStyle(style, mxgraph.mxConstants.STYLE_FONTCOLOR, 'white')
+    // update style and add overlay
+    for (const [activityName, violationRatio] of Object.entries(stats.normalizedStats)) {
+        const activityElement = getBpmnActivityElementbyName(activityName)
+        if (activityElement) {
+            const fontColor = violationRatio > 0.5 ? 'white' : 'default';
+            globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(activityElement.bpmnSemantic.id, {
+                fill: {
+                    color: myViolationScale(violationRatio * 100)
+                },
+                font: {
+                    color: fontColor
                 }
-                graph.getModel().setStyle(activityCell, style);
+            });
 
-                //add overlay
-                globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
-                  activityElement.bpmnSemantic.id,
-                  [
-                      getDeviationOverlay(stats.aggStats[activityName].modelMove,
-                        violationRatio,
-                        myViolationScale(violationRatio * 100)),
-                      getSynchronousOverlay(stats.aggStats[activityName].syncMove)
-                  ])
-            }
+            //add overlay
+            globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
+                activityElement.bpmnSemantic.id,
+                [
+                    getDeviationOverlay(stats.aggStats[activityName].modelMove,
+                    violationRatio,
+                    myViolationScale(violationRatio * 100)),
+                    getSynchronousOverlay(stats.aggStats[activityName].syncMove)
+                ])
         }
-        // Allow to save the style in a new state, in particular keep the rounded activity
-        graph.refresh();
-    } finally {
-        graph.getModel().endUpdate();
     }
 
     //add legend
