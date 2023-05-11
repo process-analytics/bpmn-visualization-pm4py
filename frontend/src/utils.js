@@ -15,6 +15,5 @@ export function mapFrequencyToWidth(frequency, minFrequency, maxFrequency, minWi
     const range = maxFrequency - minFrequency;
     const fraction = (frequency - minFrequency) / range;
     const widthRange = maxWidth - minWidth;
-    const width = minWidth + (fraction * widthRange);
-    return width;
+    return minWidth + (fraction * widthRange);
 }
