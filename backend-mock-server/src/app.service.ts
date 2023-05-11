@@ -12,11 +12,11 @@ export class AppService {
 
   getFrequencyStats(): FrequencyStats {
     return {
-      'Assign Approver': 65,
-      'Approve Invoice': 113,
-      'Clarify Invoice': 48,
-      'Prepare Bank Transfer': 107,
-      'Archive Invoice': 107,
+      'Activity_1': 65, // 'Assign Approver'
+      'Activity_1omool6': 113, // 'Approve Invoice'
+      'Activity_1pkoaqu': 48, // 'Clarify Invoice'
+      'Activity_1gv7jjb': 107, // 'Prepare Bank Transfer'
+      'Activity_11n0ixn': 107, // 'Archive Invoice'
     };
   }
 
