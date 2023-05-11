@@ -55,10 +55,7 @@ function visualizeAlignment(alignedTraces){
     for (const [activityName, violationRatio] of Object.entries(stats.normalizedStats)) {
         const activityElement = getBpmnActivityElementbyName(activityName)
         if (activityElement) {
-            let fontColor = 'default';
-            if (violationRatio > 0.5) {
-                fontColor= 'white';
-            }
+            const fontColor = violationRatio > 0.5 ? 'white' : 'default';
             globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(activityElement.bpmnSemantic.id, {
                 fill: {
                     color: myViolationScale(violationRatio * 100)
