@@ -12,11 +12,18 @@ export class AppService {
 
   getFrequencyStats(): FrequencyStats {
     return {
-      'Assign Approver': 65,
-      'Approve Invoice': 113,
-      'Clarify Invoice': 48,
-      'Prepare Bank Transfer': 107,
-      'Archive Invoice': 107,
+      // Shapes
+      'Activity_1': 65, // 'Assign Approver'
+      'Activity_1omool6': 113, // 'Approve Invoice'
+      'Activity_1pkoaqu': 48, // 'Clarify Invoice'
+      'Activity_1gv7jjb': 107, // 'Prepare Bank Transfer'
+      'Activity_11n0ixn': 107, // 'Archive Invoice'
+      // Edges
+      'Flow_1w8ldp8': 65, // between 'Assign Approver' and 'Approve Invoice'
+      'Flow_1pl5mvt': 113, // between 'Approve Invoice' and gateway
+      'Flow_0odkkje': 48, // between gateway and 'Clarify Invoice'
+      'Flow_09havhs': 48, // between gateway and 'Approve Invoice'
+      'Flow_1x81xda': 107, // between gateway and 'Archive Invoice'
     };
   }
 

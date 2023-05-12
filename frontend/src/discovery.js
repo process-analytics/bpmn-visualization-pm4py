@@ -4,7 +4,7 @@ import { FitType, mxgraph, ShapeBpmnElementKind } from 'bpmn-visualization';
 import { frequencyScale } from './colors.js'
 import { getFrequencyOverlay } from './overlays.js';
 import { colorLegend, overlayLegend } from './legend.js';
-import { apiUrl } from './utils.js';
+import { apiUrl, mapFrequencyToWidth } from './utils.js';
 
 export function getBPMNDiagram(formData) {
     console.log('Get bpmn...');
@@ -91,8 +91,16 @@ function visualizeFrequency(data) {
                     bpmnElement.bpmnSemantic.id,
                     getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'top-right'));
             }
-            // Add overlay on edge
+            // Update edge style and add overlay on edge
             else {
+                const edgeWidth = mapFrequencyToWidth(freqNum, 0, max, 0, 5);
+                globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(eltId, {
+                    stroke:{
+                        width: edgeWidth,
+                        color: myFrequencyScale(freqNum)
+                    }
+                });
+
                 globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
                     bpmnElement.bpmnSemantic.id,
                     getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'middle'));
@@ -106,7 +114,7 @@ function visualizeFrequency(data) {
     //add legend
     colorLegend({
         colorScale: myFrequencyScale,
-        title: 'Frequency of execution'
+        title: 'Frequency of execution (absolute)'
     });
 
     overlayLegend({rightOverlayLegend : '# executions'});
