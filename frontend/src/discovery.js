@@ -70,44 +70,49 @@ function visualizeFrequency(data) {
     //iterate over the elements (activities and edges) and set their color by calling the frequency color scale function
     for (const [eltId, freqValue] of Object.entries(data)) {
         const freqNum = parseInt(freqValue);
-        const bpmnElement = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(eltId)[0];
+
+        // freqValue is None if the BPMN element has never been executed
+        // Add frequency related statistics only if freqNum is not NaN
+        if(!isNaN(freqNum)){
+            const bpmnElement = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(eltId)[0];
         
-        if(bpmnElement){
-            // Update style of activity element
-            if (bpmnElement.bpmnSemantic.isShape) {
-                const fontColor = freqNum > avg ? 'white' : 'default';
+            if(bpmnElement){
+                // Update style of activity element
+                if (bpmnElement.bpmnSemantic.isShape) {
+                    const fontColor = freqNum > avg ? 'white' : 'default';
 
-                globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(eltId,{
-                    fill: {
-                        color: myFrequencyScale(freqNum)
-                    },
-                    font: {
-                        color: fontColor
-                    }
-                });
+                    globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(eltId,{
+                        fill: {
+                            color: myFrequencyScale(freqNum)
+                        },
+                        font: {
+                            color: fontColor
+                        }
+                    });
 
-                //add frequency overlay
-                globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
-                    bpmnElement.bpmnSemantic.id,
-                    getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'top-right'));
+                    //add frequency overlay
+                    globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
+                        bpmnElement.bpmnSemantic.id,
+                        getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'top-right'));
+                }
+                // Update edge style and add overlay on edge
+                else {
+                    const edgeWidth = mapFrequencyToWidth(freqNum, 0, max, 0, 5);
+                    globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(eltId, {
+                        stroke:{
+                            width: edgeWidth,
+                            color: myFrequencyScale(freqNum)
+                        }
+                    });
+
+                    globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
+                        bpmnElement.bpmnSemantic.id,
+                        getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'middle'));
+                }
             }
-            // Update edge style and add overlay on edge
-            else {
-                const edgeWidth = mapFrequencyToWidth(freqNum, 0, max, 0, 5);
-                globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(eltId, {
-                    stroke:{
-                        width: edgeWidth,
-                        color: myFrequencyScale(freqNum)
-                    }
-                });
-
-                globals.bpmnVisualization.bpmnElementsRegistry.addOverlays(
-                    bpmnElement.bpmnSemantic.id,
-                    getFrequencyOverlay(freqNum, max, myFrequencyScale(freqNum), 'middle'));
+            else{
+                console.log(`did not find the element of id ${eltId}`)
             }
-        }
-        else{
-            console.log(`did not find the element of id ${eltId}`)
         }
     }
 
