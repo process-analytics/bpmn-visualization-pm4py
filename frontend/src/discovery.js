@@ -71,8 +71,8 @@ function visualizeFrequency(data) {
     for (const [eltId, freqValue] of Object.entries(data)) {
         const freqNum = parseInt(freqValue);
 
-        // freqNum may be NaN if the BPMN element has never been executed
-        // Add frequency related statistics only of freqNum is not null
+        // freqValue is None if the BPMN element has never been executed
+        // Add frequency related statistics only if freqNum is not NaN
         if(!isNaN(freqNum)){
             const bpmnElement = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByIds(eltId)[0];
         
