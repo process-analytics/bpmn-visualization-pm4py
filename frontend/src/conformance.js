@@ -28,24 +28,12 @@ function visualizeAlignment(alignedTraces){
     // reset fill and font color for activities
     const activities = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByKinds(ShapeBpmnElementKind.TASK);
     const activitiesIds = activities.map(elt => elt.bpmnSemantic.id);
-    globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(activitiesIds, {
-        fill:{
-            color: 'default'
-        },
-        font: {
-            color: 'default'
-        }
-    });
+    globals.bpmnVisualization.bpmnElementsRegistry.resetStyle(activitiesIds);
 
     // reset color and width for edges
     const edges = globals.bpmnVisualization.bpmnElementsRegistry.getElementsByKinds(FlowKind.SEQUENCE_FLOW);
     const edgesIds = edges.map(elt => elt.bpmnSemantic.id);
-    globals.bpmnVisualization.bpmnElementsRegistry.updateStyle(edgesIds, {
-        stroke:{
-            color: 'default'
-        },
-        width: 'default'
-    });
+    globals.bpmnVisualization.bpmnElementsRegistry.resetStyle(edgesIds);
 
     //remove overlays
     activities.forEach(act => globals.bpmnVisualization.bpmnElementsRegistry.removeAllOverlays(act.bpmnSemantic.id))
