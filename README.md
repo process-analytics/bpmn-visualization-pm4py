@@ -1,6 +1,5 @@
 # Integration between `bpmn-visualization` and `pm4py`
 
-```suggestion
 | Archived on 2024-01-13 | We no longer use this repository. |
 | -------- | -------- |
 
