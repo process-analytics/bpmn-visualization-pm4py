@@ -1,7 +1,8 @@
 # Integration between `bpmn-visualization` and `pm4py`
 
-> ⚠️ **WARNING**  
-> This repository is **archived**. 
+```suggestion
+| Archived on 2024-01-13 | We no longer use this repository. |
+| -------- | -------- |
 
 This is an example integration between [bpmn-visualization](https://github.com/process-analytics/bpmn-visualization-js/) and [PM4PY](https://github.com/pm4py).
 
